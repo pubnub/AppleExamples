@@ -15,6 +15,7 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic, readonly) PubNub *client;
 
+@property (nonatomic, strong, readonly) NSData *pushDeviceToken;
 
 @end
 

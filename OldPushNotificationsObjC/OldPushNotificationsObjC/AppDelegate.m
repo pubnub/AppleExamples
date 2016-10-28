@@ -8,17 +8,48 @@
 
 #import <PubNub/PubNub.h>
 #import "AppDelegate.h"
+@import UserNotifications;
+
+NSString * const kPushNotificationTokenKey = @"PushNotificationTokenKey";
+NSString * const kPublishKey = @"pub-c-e4cf2b98-aa68-47de-89f1-a7c4664c8793";
+NSString * const kSubscribeKey = @"sub-c-0e7ca0ce-9d5d-11e6-8eb2-02ee2ddab7fe";
 
 @interface AppDelegate () <PNObjectEventListener>
 @property (strong, nonatomic, readwrite) PubNub *client;
+@property (strong, nonatomic, readwrite) NSData *pushDeviceToken;
 @end
 
 @implementation AppDelegate
+@synthesize pushDeviceToken = _pushDeviceToken;
+
+- (NSData *)pushDeviceToken {
+    if (!_pushDeviceToken) {
+        _pushDeviceToken = [[NSUserDefaults standardUserDefaults] objectForKey:kPushNotificationTokenKey];
+    }
+    return _pushDeviceToken;
+}
+
+- (void)setPushDeviceToken:(NSData *)pushDeviceToken {
+    // First we want to remove the old device push token if it is non nil
+    // It is important to make a copy because we are about to replace the value
+    // And we want to make sure if there is a retry it does not retry with the
+    // newly replaced value
+    NSData *oldTokenCopy = self.pushDeviceToken.copy;
+    if (oldTokenCopy) {
+        [self.client removeAllPushNotificationsFromDeviceWithPushToken:oldTokenCopy andCompletion:^(PNAcknowledgmentStatus * _Nonnull status) {
+            // Confirm the push token was removed
+        }];
+    }
+    _pushDeviceToken = pushDeviceToken;
+    // Here is where we store the push device token for future use
+    [[NSUserDefaults standardUserDefaults] setObject:_pushDeviceToken forKey:kPushNotificationTokenKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 - (PubNub *)client {
     if (!_client) {
         // insert your keys here
-        PNConfiguration *config = [PNConfiguration configurationWithPublishKey:@"demo" subscribeKey:@"demo"];
+        PNConfiguration *config = [PNConfiguration configurationWithPublishKey:kPublishKey subscribeKey:kSubscribeKey];
         _client = [PubNub clientWithConfiguration:config];
         // optionally add the app delegate as a listener, or anything else
         // View Controllers should get the client from the App Delegate
@@ -32,8 +63,61 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    // This is where you should register for push notifications and
-    // add any push tokens using your client
+    // We want to check Notification Settings on launch.
+    // First we must determine your iOS type:
+    // Note this will only work for iOS 8 and up, if you require iOS 7 notifications then
+    // contact support@pubnub.com with your request
+    if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4) {
+        [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+            switch (settings.authorizationStatus) {
+                    // This means we have not yet asked for notification permissions
+                case UNAuthorizationStatusNotDetermined:
+                {
+                    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                        // You might want to remove this, or handle errors differently in production
+                        NSAssert(error == nil, @"There should be no error");
+                        if (granted) {
+                            [[UIApplication sharedApplication] registerForRemoteNotifications];
+                        }
+                    }];
+                }
+                    break;
+                    // We are already authorized, so no need to ask
+                case UNAuthorizationStatusAuthorized:
+                {
+                    // Just try and register for remote notifications
+                    [[UIApplication sharedApplication] registerForRemoteNotifications];
+                }
+                    break;
+                    // We are denied User Notifications
+                case UNAuthorizationStatusDenied:
+                {
+                    // Possibly display something to the user
+                    UIAlertController *useNotificationsController = [UIAlertController alertControllerWithTitle:@"Turn on notifications" message:@"This app needs notifications turned on for the best user experience" preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction *goToSettingsAction = [UIAlertAction actionWithTitle:@"Go to settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                        
+                    }];
+                    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:nil];
+                    [useNotificationsController addAction:goToSettingsAction];
+                    [useNotificationsController addAction:cancelAction];
+                    [self.window.rootViewController presentViewController:useNotificationsController animated:true completion:nil];
+                    NSLog(@"We cannot use notifications because the user has denied permissions");
+                }
+                    break;
+            }
+            
+        }];
+    } else if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_8_0) {
+//        UIUserNotificationSettings *currentSettings = [[UIApplication shared] currentUserNotificationSettings];
+        UIUserNotificationType types = (UIUserNotificationTypeBadge | UIUserNotificationTypeSound |
+                                        UIUserNotificationTypeAlert);
+        UIUserNotificationSettings *mySettings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
+        
+        [[UIApplication sharedApplication] registerUserNotificationSettings:mySettings];
+    } else {
+        NSLog(@"We cannot handle iOS 7 or lower in this example");
+    }
+    
     return YES;
 }
 
@@ -73,6 +157,35 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+#pragma mark - Push Notifications
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    NSLog(@"deviceToken: %@", deviceToken);
+    self.pushDeviceToken = deviceToken;
+    if (self.pushDeviceToken) {
+        // Add any push tokens to channels on app did finish launching
+        NSArray<NSString *> *pushChannels = @[@"a"];
+        // As a bonus, since we have cached the push token above,
+        // if you add channels elsewhere that you would also like
+        // to receive pushes on, then use the `pushDeviceToken`
+        // property from the App Delegate to add push tokens then as well
+        [self.client addPushNotificationsOnChannels:pushChannels withDevicePushToken:self.pushDeviceToken andCompletion:^(PNAcknowledgmentStatus * _Nonnull status) {
+            // Confirm push token addition
+        }];
+    }
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    // Handle error here (most likely a failed certificate or an
+    // invalid network connection
+}
+
+#pragma mark - User Notification Settings
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+    [application registerForRemoteNotifications];
+}
+
 #pragma mark - Memory Warning
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
@@ -100,6 +213,7 @@
 
 - (void)client:(PubNub *)client didReceiveMessage:(PNMessageResult *)message {
     // This most likely won't be used here, but in any relevant view controllers
+    NSLog(@"message: %@", message.data.message);
 }
 
 - (void)client:(PubNub *)client didReceivePresenceEvent:(PNPresenceEventResult *)event {
