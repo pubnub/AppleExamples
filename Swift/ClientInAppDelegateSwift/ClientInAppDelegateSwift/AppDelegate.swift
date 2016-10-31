@@ -67,20 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
-    // MARK: - Memory Warning
-    
-    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
-        // This is called when there is memory pressure, as expected
-        // It is a good to release our reference to our PubNub client if
-        // it is not subscribing, since it is needed then, and will be
-        // created again if it is needed.
-        // Note: Only release it if it is not subscribing, otherwise this
-        // will most likely negatively impact user experience
-        if self.client.channels().isEmpty && self.client.channelGroups().isEmpty && self.client.presenceChannels().isEmpty {
-            self.client = nil
-        }
-    }
-    
     // MARK: - PNObjectEventListener
     
     func client(_ client: PubNub, didReceive status: PNStatus) {
