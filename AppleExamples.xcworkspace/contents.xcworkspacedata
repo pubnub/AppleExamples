@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
-   <FileRef
-      location = "group:Objective-C/ClientInAppDelegateObjC/ClientInAppDelegateObjC.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Objective-C/OldPushNotificationsObjC/OldPushNotificationsObjC.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Objective-C/PushNotificationsObjC/PushNotificationsObjC.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Swift/ClientInAppDelegateSwift/ClientInAppDelegateSwift.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Swift/OldPushNotificationsSwift/OldPushNotificationsSwift.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Swift/PushNotificationsSwift/PushNotificationsSwift.xcodeproj">
-   </FileRef>
+   <Group
+      location = "container:"
+      name = "Swift">
+      <FileRef
+         location = "group:Swift/ClientInAppDelegateSwift/ClientInAppDelegateSwift.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Swift/PushNotificationsSwift/PushNotificationsSwift.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Swift/OldPushNotificationsSwift/OldPushNotificationsSwift.xcodeproj">
+      </FileRef>
+   </Group>
+   <Group
+      location = "container:"
+      name = "Objective-C">
+      <FileRef
+         location = "group:Objective-C/ClientInAppDelegateObjC/ClientInAppDelegateObjC.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Objective-C/PushNotificationsObjC/PushNotificationsObjC.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Objective-C/OldPushNotificationsObjC/OldPushNotificationsObjC.xcodeproj">
+      </FileRef>
+   </Group>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>

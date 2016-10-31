@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     lazy var client: PubNub = {
         // insert your keys here
-        let config = PNConfiguration(publishKey: "demo", subscribeKey: "demo")
+        let config = PNConfiguration(publishKey: publishKey, subscribeKey: subscribeKey)
         let createdClient = PubNub.clientWithConfiguration(config)
         // optionally add the app delegate as a listener, or anything else
         // View Controllers should get the client from the App Delegate

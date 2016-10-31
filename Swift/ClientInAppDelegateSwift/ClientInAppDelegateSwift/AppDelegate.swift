@@ -9,6 +9,9 @@
 import UIKit
 import PubNub
 
+fileprivate let publishKey = "demo"
+fileprivate let subscribeKey = "demo"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
 
@@ -16,13 +19,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     lazy var client: PubNub = {
         // insert your keys here
-        let config = PNConfiguration(publishKey: "demo", subscribeKey: "demo")
+        let config = PNConfiguration(publishKey: publishKey, subscribeKey: subscribeKey)
         let createdClient = PubNub.clientWithConfiguration(config)
         // optionally add the app delegate as a listener, or anything else
         // View Controllers should get the client from the App Delegate
         // and add themselves as listeners if they are interested in
         // stream events (subscribe, presence, status)
         createdClient.addListener(self)
+        return createdClient
     }()
 
 

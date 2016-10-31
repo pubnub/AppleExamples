@@ -9,6 +9,9 @@
 #import <PubNub/PubNub.h>
 #import "AppDelegate.h"
 
+NSString * const kPublishKey = @"demo";
+NSString * const kSubscribeKey = @"demo";
+
 @interface AppDelegate () <PNObjectEventListener>
 @property (strong, nonatomic, readwrite) PubNub *client;
 @end
@@ -18,7 +21,7 @@
 - (PubNub *)client {
     if (!_client) {
         // insert your keys here
-        PNConfiguration *config = [PNConfiguration configurationWithPublishKey:@"demo" subscribeKey:@"demo"];
+        PNConfiguration *config = [PNConfiguration configurationWithPublishKey:kPublishKey subscribeKey:kSubscribeKey];
         _client = [PubNub clientWithConfiguration:config];
         // optionally add the app delegate as a listener, or anything else
         // View Controllers should get the client from the App Delegate
@@ -72,24 +75,6 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-}
-
-#pragma mark - Memory Warning
-
-- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-    // This is called when there is memory pressure, as expected
-    // It is a good to release our reference to our PubNub client if
-    // it is not subscribing, since it is needed then, and will be
-    // created again if it is needed.
-    // Note: Only release it if it is not subscribing, otherwise this
-    // will most likely negatively impact user experience
-    if (
-        (self.client.channels.count == 0) &&
-        (self.client.channelGroups.count == 0) &&
-        (self.client.presenceChannels.count == 0)
-        ){
-        self.client = nil;
-    }
 }
 
 #pragma mark - PNObjectEventListener

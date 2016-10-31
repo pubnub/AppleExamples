@@ -67,7 +67,8 @@ NSString * const kSubscribeKey = @"sub-c-0e7ca0ce-9d5d-11e6-8eb2-02ee2ddab7fe";
     // First we must determine your iOS type:
     // Note this will only work for iOS 8 and up, if you require iOS 7 notifications then
     // contact support@pubnub.com with your request
-    if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4) {
+    float systemVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
+    if (systemVersion >= 10) {
         [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
             switch (settings.authorizationStatus) {
                     // This means we have not yet asked for notification permissions
@@ -107,8 +108,7 @@ NSString * const kSubscribeKey = @"sub-c-0e7ca0ce-9d5d-11e6-8eb2-02ee2ddab7fe";
             }
             
         }];
-    } else if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_8_0) {
-//        UIUserNotificationSettings *currentSettings = [[UIApplication shared] currentUserNotificationSettings];
+    } else if ((systemVersion < 10) || (systemVersion >= 8)) {
         UIUserNotificationType types = (UIUserNotificationTypeBadge | UIUserNotificationTypeSound |
                                         UIUserNotificationTypeAlert);
         UIUserNotificationSettings *mySettings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
@@ -185,24 +185,6 @@ NSString * const kSubscribeKey = @"sub-c-0e7ca0ce-9d5d-11e6-8eb2-02ee2ddab7fe";
 // This is for iOS 8/9
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
     [application registerForRemoteNotifications];
-}
-
-#pragma mark - Memory Warning
-
-- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-    // This is called when there is memory pressure, as expected
-    // It is a good to release our reference to our PubNub client if
-    // it is not subscribing, since it is needed then, and will be
-    // created again if it is needed.
-    // Note: Only release it if it is not subscribing, otherwise this
-    // will most likely negatively impact user experience
-    if (
-        (self.client.channels.count == 0) &&
-        (self.client.channelGroups.count == 0) &&
-        (self.client.presenceChannels.count == 0)
-        ){
-        self.client = nil;
-    }
 }
 
 #pragma mark - PNObjectEventListener
