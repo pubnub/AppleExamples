@@ -1,4 +1,4 @@
-#project 'ClientInAppDelegateObjC/ClientInAppDelegateObjC'
+# This serves as an example Podfile for installing PubNub with Cocoapods
 workspace 'AppleExamples'
 
 use_frameworks!
