@@ -5,6 +5,9 @@
       location = "container:"
       name = "Swift">
       <FileRef
+         location = "group:Swift/ClientAsSingletonSwift/ClientAsSingletonSwift.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Swift/ClientInAppDelegateSwift/ClientInAppDelegateSwift.xcodeproj">
       </FileRef>
       <FileRef
@@ -17,6 +20,9 @@
    <Group
       location = "container:"
       name = "Objective-C">
+      <FileRef
+         location = "group:Objective-C/ClientAsSingletonObjC/ClientAsSingletonObjC.xcodeproj">
+      </FileRef>
       <FileRef
          location = "group:Objective-C/ClientInAppDelegateObjC/ClientInAppDelegateObjC.xcodeproj">
       </FileRef>

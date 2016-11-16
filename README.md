@@ -11,6 +11,9 @@ Shows how to properly create and use PubNub in the AppDelegate of an iOS app and
 
 Take note of how the client instance from the AppDelegate is accessed from a UIViewController
 
+### ClientAsSingleton
+Shows how to properly create and use PubNub as a singleton within an iOS app and how to call that singleton from a UIViewController.
+
 ### PushNotifications
 Shows how to properly use APNS on only iOS 10 with PubNub. If you want to use push notifications and target iOS 8 through 10, then see OldPushNotifications
 

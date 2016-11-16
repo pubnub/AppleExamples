@@ -21,6 +21,12 @@ target 'OldPushNotificationsObjC' do
 	pod 'PubNub'
 end
 
+target 'ClientAsSingletonObjC' do
+	project 'Objective-C/ClientAsSingletonObjC/ClientAsSingletonObjC'
+	platform :ios, '8.0'
+	pod 'PubNub'
+end
+
 target 'ClientInAppDelegateSwift' do
 	project 'Swift/ClientInAppDelegateSwift/ClientInAppDelegateSwift'
 	platform :ios, '10.0'
@@ -36,5 +42,11 @@ end
 target 'OldPushNotificationsSwift' do
 	project 'Swift/OldPushNotificationsSwift/OldPushNotificationsSwift'
 	platform :ios, '9.0'
+	pod 'PubNub'
+end
+
+target 'ClientAsSingletonSwift' do
+	project 'Swift/ClientAsSingletonSwift/ClientAsSingletonSwift'
+	platform :ios, '8.0'
 	pod 'PubNub'
 end
