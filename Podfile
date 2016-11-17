@@ -50,3 +50,17 @@ target 'ClientAsSingletonSwift' do
 	platform :ios, '8.0'
 	pod 'PubNub'
 end
+
+target 'MapboxObjC' do
+	project 'Objective-C/MapboxObjC/MapboxObjC'
+	platform :ios, '8.0'
+	pod 'PubNub'
+	pod 'Mapbox-iOS-SDK', '~> 3.3'
+end
+
+target 'MapboxSwift' do
+	project 'Swift/MapboxSwift/MapboxSwift'
+	platform :ios, '8.0'
+	pod 'PubNub'
+	pod 'Mapbox-iOS-SDK', '~> 3.3'
+end
