@@ -10,30 +10,39 @@ import UIKit
 import PubNub
 import CoreLocation
 
-fileprivate let publishKey = "demo"
-fileprivate let subscribeKey = "demo"
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     var window: UIWindow?
     
-    lazy var client: PubNub = {
-        // insert your keys here
-        let config = PNConfiguration(publishKey: publishKey, subscribeKey: subscribeKey)
-        let createdClient = PubNub.clientWithConfiguration(config)
-        // optionally add the app delegate as a listener, or anything else
-        // View Controllers should get the client from the App Delegate
-        // and add themselves as listeners if they are interested in
-        // stream events (subscribe, presence, status)
-        createdClient.addListener(self)
-        return createdClient
-    }()
-    
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        LocationManager.sharedManager.performAppStartActions()
+//        LocationManager.sharedManager.performAppStartActions()
+        if Account.sharedAccount.hasActiveUser {
+            DispatchQueue.main.async {
+                let mapViewController = MapViewController.storyboardController()
+                guard let navController = self.window?.rootViewController as? UINavigationController else {
+                    fatalError("This project is not set up as expected")
+                }
+                navController.pushViewController(mapViewController, animated: true)
+            }
+        } else {
+            DispatchQueue.main.async {
+                let alertController = Account.sharedAccount.updateNameAlertController(handler: { (action) in
+                    guard action.title == "OK" else {
+                        return
+                    }
+                    if Account.sharedAccount.hasActiveUser {
+                        DispatchQueue.main.async {
+                            let mapViewController = MapViewController.storyboardController()
+                            self.window?.rootViewController?.navigationController?.pushViewController(mapViewController, animated: true)
+                        }
+                    }
+                })
+                self.window?.rootViewController?.present(alertController, animated: true)
+            }
+        }
         return true
     }
     
@@ -47,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         
         // This is where you should unsubscribe
-        self.client.unsubscribeFromAll()
+//        self.client.unsubscribeFromAll()
         // optionally add any push notification channels here
     }
     
@@ -59,10 +68,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
         // This is the best place to begin resubscribing to any important channels
-        let channels = [
-            "a",
-            ]
-        self.client.subscribeToChannels(channels, withPresence: true)
+//        let channels = [
+//            "a",
+//            ]
+//        self.client.subscribeToChannels(channels, withPresence: true)
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
@@ -71,40 +80,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     // MARK: - PubNub Publish Action
     
-    func publishCurrentLocationInfo(with username: String?, location: CLLocationCoordinate2D) {
-        guard let currentUsername = username else {
-            print("We need a username to publish")
-            return
-        }
-        let message: [String: Any] = [
-            "latitude": location.latitude,
-            "longitude": location.longitude,
-            "username": currentUsername,
-            "uuid": client.uuid(),
-        ]
-        client.publish(message, toChannel: "locationChannel") { (status) in
-            if status.isError {
-                // Handle error
-            }
-        }
-        
-    }
-    
-    // MARK: - PNObjectEventListener
-    
-    func client(_ client: PubNub, didReceive status: PNStatus) {
-        // This is a good place to deal with unexpected status messages like
-        // network failures
-    }
-    
-    func client(_ client: PubNub, didReceiveMessage message: PNMessageResult) {
-        // This most likely won't be used here, but in any relevant view controllers
-    }
-    
-    func client(_ client: PubNub, didReceivePresenceEvent event: PNPresenceEventResult) {
-        // This most likely won't be used here, but in any relevant view controllers
-    }
-    
+//    func publishCurrentLocationInfo(with username: String?, location: CLLocationCoordinate2D) {
+//        guard let currentUsername = username else {
+//            print("We need a username to publish")
+//            return
+//        }
+//        let message: [String: Any] = [
+//            "latitude": location.latitude,
+//            "longitude": location.longitude,
+//            "username": currentUsername,
+//            "uuid": client.uuid(),
+//        ]
+//        client.publish(message, toChannel: "locationChannel") { (status) in
+//            if status.isError {
+//                // Handle error
+//            }
+//        }
+//        
+//    }
     
 }
 

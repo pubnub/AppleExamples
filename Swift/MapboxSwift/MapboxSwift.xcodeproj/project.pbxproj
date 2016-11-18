@@ -16,6 +16,11 @@
 		51FDA09C1DDD21D1007E8034 /* MapboxSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA09B1DDD21D1007E8034 /* MapboxSwiftTests.swift */; };
 		51FDA0A71DDD21D1007E8034 /* MapboxSwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0A61DDD21D1007E8034 /* MapboxSwiftUITests.swift */; };
 		51FDA0F41DDE60F8007E8034 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0F31DDE60F8007E8034 /* LocationManager.swift */; };
+		51FDA0F61DDFA99B007E8034 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0F51DDFA99B007E8034 /* Account.swift */; };
+		51FDA0F81DDFA9CC007E8034 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0F71DDFA9CC007E8034 /* Network.swift */; };
+		51FDA0FA1DDFAFA3007E8034 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0F91DDFAFA3007E8034 /* User.swift */; };
+		51FDA0FC1DDFB6F5007E8034 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0FB1DDFB6F5007E8034 /* SplashViewController.swift */; };
+		51FDA0FE1DDFB739007E8034 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0FD1DDFB739007E8034 /* MapViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +57,11 @@
 		51FDA0A61DDD21D1007E8034 /* MapboxSwiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapboxSwiftUITests.swift; sourceTree = "<group>"; };
 		51FDA0A81DDD21D1007E8034 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		51FDA0F31DDE60F8007E8034 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		51FDA0F51DDFA99B007E8034 /* Account.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		51FDA0F71DDFA9CC007E8034 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		51FDA0F91DDFAFA3007E8034 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		51FDA0FB1DDFB6F5007E8034 /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		51FDA0FD1DDFB739007E8034 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		57F724B3EFC1FA0F3843B28C /* Pods-MapboxSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MapboxSwift.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-MapboxSwift/Pods-MapboxSwift.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,6 +119,11 @@
 				51FDA0861DDD21D0007E8034 /* AppDelegate.swift */,
 				51FDA0F31DDE60F8007E8034 /* LocationManager.swift */,
 				51FDA0881DDD21D0007E8034 /* ViewController.swift */,
+				51FDA0F51DDFA99B007E8034 /* Account.swift */,
+				51FDA0FD1DDFB739007E8034 /* MapViewController.swift */,
+				51FDA0F91DDFAFA3007E8034 /* User.swift */,
+				51FDA0FB1DDFB6F5007E8034 /* SplashViewController.swift */,
+				51FDA0F71DDFA9CC007E8034 /* Network.swift */,
 				51FDA08A1DDD21D0007E8034 /* Main.storyboard */,
 				51FDA08D1DDD21D0007E8034 /* Assets.xcassets */,
 				51FDA08F1DDD21D0007E8034 /* LaunchScreen.storyboard */,
@@ -345,9 +360,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51FDA0F81DDFA9CC007E8034 /* Network.swift in Sources */,
 				51FDA0891DDD21D0007E8034 /* ViewController.swift in Sources */,
+				51FDA0FA1DDFAFA3007E8034 /* User.swift in Sources */,
+				51FDA0F61DDFA99B007E8034 /* Account.swift in Sources */,
 				51FDA0871DDD21D0007E8034 /* AppDelegate.swift in Sources */,
+				51FDA0FC1DDFB6F5007E8034 /* SplashViewController.swift in Sources */,
 				51FDA0F41DDE60F8007E8034 /* LocationManager.swift in Sources */,
+				51FDA0FE1DDFB739007E8034 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
