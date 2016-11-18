@@ -8,6 +8,7 @@
 
 import UIKit
 import PubNub
+import CoreLocation
 
 fileprivate let publishKey = "demo"
 fileprivate let subscribeKey = "demo"
@@ -32,6 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        LocationManager.sharedManager.performAppStartActions()
         return true
     }
     
@@ -65,6 +67,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    // MARK: - PubNub Publish Action
+    
+    func publishCurrentLocationInfo(with username: String?, location: CLLocationCoordinate2D) {
+        guard let currentUsername = username else {
+            print("We need a username to publish")
+            return
+        }
+        let message: [String: Any] = [
+            "latitude": location.latitude,
+            "longitude": location.longitude,
+            "username": currentUsername,
+            "uuid": client.uuid(),
+        ]
+        client.publish(message, toChannel: "locationChannel") { (status) in
+            if status.isError {
+                // Handle error
+            }
+        }
+        
     }
     
     // MARK: - PNObjectEventListener
