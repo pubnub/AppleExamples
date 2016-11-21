@@ -15,34 +15,49 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     var window: UIWindow?
     
+    let dispatchQueue: DispatchQueue = {
+        return DispatchQueue(label: "WorkQueue", qos: .default, attributes: [.concurrent])
+    }()
+    
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 //        LocationManager.sharedManager.performAppStartActions()
+        LocationManager.sharedManager.performAppStartActions()
         if Account.sharedAccount.hasActiveUser {
             DispatchQueue.main.async {
                 let mapViewController = MapViewController.storyboardController()
-                guard let navController = self.window?.rootViewController as? UINavigationController else {
-                    fatalError("This project is not set up as expected")
-                }
-                navController.pushViewController(mapViewController, animated: true)
-            }
-        } else {
-            DispatchQueue.main.async {
-                let alertController = Account.sharedAccount.updateNameAlertController(handler: { (action) in
-                    guard action.title == "OK" else {
-                        return
-                    }
-                    if Account.sharedAccount.hasActiveUser {
-                        DispatchQueue.main.async {
-                            let mapViewController = MapViewController.storyboardController()
-                            self.window?.rootViewController?.navigationController?.pushViewController(mapViewController, animated: true)
-                        }
-                    }
-                })
-                self.window?.rootViewController?.present(alertController, animated: true)
+                let navController = UINavigationController(rootViewController: mapViewController)
+                navController.modalPresentationStyle = .fullScreen
+                navController.modalTransitionStyle = .coverVertical
+                self.window?.rootViewController?.present(navController, animated: true)
             }
         }
+        
+//        if Account.sharedAccount.hasActiveUser {
+//            DispatchQueue.main.async {
+//                let mapViewController = MapViewController.storyboardController()
+//                guard let navController = self.window?.rootViewController as? UINavigationController else {
+//                    fatalError("This project is not set up as expected")
+//                }
+//                navController.pushViewController(mapViewController, animated: true)
+//            }
+//        } else {
+//            DispatchQueue.main.async {
+//                let alertController = Account.sharedAccount.updateNameAlertController(handler: { (action) in
+//                    guard action.title == "OK" else {
+//                        return
+//                    }
+//                    if Account.sharedAccount.hasActiveUser {
+//                        DispatchQueue.main.async {
+//                            let mapViewController = MapViewController.storyboardController()
+//                            self.window?.rootViewController?.navigationController?.pushViewController(mapViewController, animated: true)
+//                        }
+//                    }
+//                })
+//                self.window?.rootViewController?.present(alertController, animated: true)
+//            }
+//        }
         return true
     }
     

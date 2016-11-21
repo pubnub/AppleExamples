@@ -28,7 +28,9 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     func performAppStartActions() {
         switch LocationManager.authorizationStatus() {
         case .authorizedAlways:
-            startUpdatingLocation()
+            if Account.sharedAccount.hasActiveUser {
+                startUpdatingLocation()
+            }
         case .authorizedWhenInUse, .denied, .restricted:
             fatalError("Not designed to run in these conditions")
         case .notDetermined:
@@ -52,11 +54,13 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         guard let latestLocation = locations.last else {
             return
         }
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-        let time = "\(Date())"
-        print("\(appDelegate) \(time)")
+        
+        Network.sharedNetwork.client?.publish(<#T##message: Any##Any#>, toChannel: <#T##String#>, withCompletion: <#T##PNPublishCompletionBlock?##PNPublishCompletionBlock?##(PNPublishStatus) -> Void#>)
+//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+//            return
+//        }
+//        let time = "\(Date())"
+//        print("\(appDelegate) \(time)")
 //        appDelegate.publishCurrentLocationInfo(with: latestLocation.coordinate)
         /*
          appDelegate.client.publish("\(time)", toChannel: "Background") { (status) in

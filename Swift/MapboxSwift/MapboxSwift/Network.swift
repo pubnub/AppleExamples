@@ -8,18 +8,25 @@
 
 import UIKit
 import PubNub
+import CoreLocation
 
 fileprivate let publishKey = "demo"
 fileprivate let subscribeKey = "demo"
+
+let LocationActivityChannel = "LocationActivityChannel"
 
 class Network: NSObject, PNObjectEventListener {
     
     private var activeUserObserverContext = 0
     
+    
     static let sharedNetwork: Network = {
         let config = PNConfiguration(publishKey: publishKey, subscribeKey: subscribeKey)
-        let client = PubNub.clientWithConfiguration(config)
-        return Network(client: client)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("How did we not find the app delegate?")
+        }
+        let client = PubNub.clientWithConfiguration(config, callbackQueue: appDelegate.dispatchQueue)
+        return Network(client: client, dispatchQueue: appDelegate.dispatchQueue)
     }()
     
     public private(set) var client: PubNub? {
@@ -36,8 +43,11 @@ class Network: NSObject, PNObjectEventListener {
         return config
     }()
     
-    init(client: PubNub? = nil) {
+    let dispatchQueue: DispatchQueue
+    
+    init(client: PubNub? = nil, dispatchQueue: DispatchQueue) {
         self.client = client
+        self.dispatchQueue = dispatchQueue
         super.init()
         self.client?.addListener(self)
     }
@@ -55,14 +65,38 @@ class Network: NSObject, PNObjectEventListener {
             }
             configuration.uuid = actualUUID
             guard let existingClient = client else {
-                client = PubNub.clientWithConfiguration(configuration)
+                client = PubNub.clientWithConfiguration(configuration, callbackQueue: self.dispatchQueue)
                 return
             }
-            existingClient.copyWithConfiguration(configuration, completion: { (copiedClient) in
+            existingClient.copyWithConfiguration(configuration, callbackQueue: self.dispatchQueue, completion: { (copiedClient) in
                 self.client = copiedClient
+                
             })
             
         }
+    }
+    
+    // MARK: - PubNub Actions
+    
+    func publish(location: CLLocationCoordinate2D, for user: User) {
+        let message: [String: Any] = [
+            "username": user.name,
+            "uuid": user.uuid,
+            "latitude": location.latitude,
+            "longitude": location.longitude,
+        ]
+        client?.publish(message, toChannel: LocationActivityChannel, withCompletion: { (status) in
+            if status.isError {
+                print("Handle publish error")
+            }
+        })
+    }
+    
+    func publishActiveUserLocation(location: CLLocationCoordinate2D) {
+        guard let activeUser = Account.sharedAccount.activeUser else {
+            return
+        }
+        publish(location: location, for: activeUser)
     }
     
     // MARK: - PNObjectEventListener

@@ -10,13 +10,13 @@ import UIKit
 
 class SplashViewController: UIViewController {
     
-    @IBOutlet weak var setUsernameButton: UIButton!
+    @IBOutlet weak var logInButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        setUsernameButton.addTarget(self, action: #selector(setUsernameButtonTapped(sender:)), for: .touchUpInside)
+        logInButton.addTarget(self, action: #selector(logInButtonTapped(sender:)), for: .touchUpInside)
         navigationItem.title = "PubNub"
     }
 
@@ -25,30 +25,22 @@ class SplashViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func setUsernameButtonTapped(sender: UIButton) {
-        let usernameAlertController = Account.sharedAccount.updateNameAlertController { (action) in
+    func logInButtonTapped(sender: UIButton) {
+        let logInAlertController = Account.sharedAccount.logInAlertController { (action) in
             guard action.title == "OK" else {
                 return
             }
             if Account.sharedAccount.hasActiveUser {
                 DispatchQueue.main.async {
                     let mapViewController = MapViewController.storyboardController()
-                    self.navigationController?.pushViewController(mapViewController, animated: true)
+                    let navController = UINavigationController(rootViewController: mapViewController)
+                    navController.modalPresentationStyle = .fullScreen
+                    navController.modalTransitionStyle = .coverVertical
+                    self.present(navController, animated: true)
                 }
             }
         }
-        present(usernameAlertController, animated: true)
+        present(logInAlertController, animated: true)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

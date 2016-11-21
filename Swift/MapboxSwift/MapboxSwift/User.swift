@@ -11,7 +11,7 @@ import UIKit
 class User: NSObject {
     
     let uuid: String
-    var name: String
+    let name: String
     
     init(uuid: String, name: String) {
         self.uuid = uuid
