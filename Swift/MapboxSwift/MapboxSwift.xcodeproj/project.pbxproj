@@ -21,6 +21,8 @@
 		51FDA0FA1DDFAFA3007E8034 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0F91DDFAFA3007E8034 /* User.swift */; };
 		51FDA0FC1DDFB6F5007E8034 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0FB1DDFB6F5007E8034 /* SplashViewController.swift */; };
 		51FDA0FE1DDFB739007E8034 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA0FD1DDFB739007E8034 /* MapViewController.swift */; };
+		51FDA1731DECCF7B007E8034 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA1721DECCF7A007E8034 /* DataController.swift */; };
+		51FDA1761DECD0BA007E8034 /* RealtimeMapping.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 51FDA1741DECD0BA007E8034 /* RealtimeMapping.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +64,8 @@
 		51FDA0F91DDFAFA3007E8034 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		51FDA0FB1DDFB6F5007E8034 /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		51FDA0FD1DDFB739007E8034 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		51FDA1721DECCF7A007E8034 /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		51FDA1751DECD0BA007E8034 /* RealtimeMapping.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RealtimeMapping.xcdatamodel; sourceTree = "<group>"; };
 		57F724B3EFC1FA0F3843B28C /* Pods-MapboxSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MapboxSwift.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-MapboxSwift/Pods-MapboxSwift.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -119,7 +123,9 @@
 				51FDA0861DDD21D0007E8034 /* AppDelegate.swift */,
 				51FDA0F31DDE60F8007E8034 /* LocationManager.swift */,
 				51FDA0881DDD21D0007E8034 /* ViewController.swift */,
+				51FDA1741DECD0BA007E8034 /* RealtimeMapping.xcdatamodeld */,
 				51FDA0F51DDFA99B007E8034 /* Account.swift */,
+				51FDA1721DECCF7A007E8034 /* DataController.swift */,
 				51FDA0FD1DDFB739007E8034 /* MapViewController.swift */,
 				51FDA0F91DDFAFA3007E8034 /* User.swift */,
 				51FDA0FB1DDFB6F5007E8034 /* SplashViewController.swift */,
@@ -363,7 +369,9 @@
 				51FDA0F81DDFA9CC007E8034 /* Network.swift in Sources */,
 				51FDA0891DDD21D0007E8034 /* ViewController.swift in Sources */,
 				51FDA0FA1DDFAFA3007E8034 /* User.swift in Sources */,
+				51FDA1761DECD0BA007E8034 /* RealtimeMapping.xcdatamodeld in Sources */,
 				51FDA0F61DDFA99B007E8034 /* Account.swift in Sources */,
+				51FDA1731DECCF7B007E8034 /* DataController.swift in Sources */,
 				51FDA0871DDD21D0007E8034 /* AppDelegate.swift in Sources */,
 				51FDA0FC1DDFB6F5007E8034 /* SplashViewController.swift in Sources */,
 				51FDA0F41DDE60F8007E8034 /* LocationManager.swift in Sources */,
@@ -643,6 +651,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		51FDA1741DECD0BA007E8034 /* RealtimeMapping.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				51FDA1751DECD0BA007E8034 /* RealtimeMapping.xcdatamodel */,
+			);
+			currentVersion = 51FDA1751DECD0BA007E8034 /* RealtimeMapping.xcdatamodel */;
+			path = RealtimeMapping.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 51FDA07B1DDD21D0007E8034 /* Project object */;
 }

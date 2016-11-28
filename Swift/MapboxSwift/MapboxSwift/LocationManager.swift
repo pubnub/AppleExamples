@@ -55,7 +55,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
             return
         }
         
-        Network.sharedNetwork.client?.publish(<#T##message: Any##Any#>, toChannel: <#T##String#>, withCompletion: <#T##PNPublishCompletionBlock?##PNPublishCompletionBlock?##(PNPublishStatus) -> Void#>)
+        Network.sharedNetwork.publishActiveUserLocation(location: latestLocation.coordinate)
 //        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
 //            return
 //        }

@@ -10,8 +10,8 @@ import UIKit
 import PubNub
 import CoreLocation
 
-fileprivate let publishKey = "demo"
-fileprivate let subscribeKey = "demo"
+fileprivate let publishKey = "demo-36"
+fileprivate let subscribeKey = "demo-36"
 
 let LocationActivityChannel = "LocationActivityChannel"
 
@@ -25,56 +25,99 @@ class Network: NSObject, PNObjectEventListener {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("How did we not find the app delegate?")
         }
-        let client = PubNub.clientWithConfiguration(config, callbackQueue: appDelegate.dispatchQueue)
-        return Network(client: client, dispatchQueue: appDelegate.dispatchQueue)
+        if let activeUUID = Account.sharedAccount.activeUser?.uuid {
+            config.uuid = activeUUID
+        }
+//        let client = PubNub.clientWithConfiguration(config, callbackQueue: appDelegate.dispatchQueue)
+//        return Network(client: client, dispatchQueue: appDelegate.dispatchQueue)
+        return Network(configuration: config, dispatchQueue: appDelegate.dispatchQueue)
     }()
     
-    public private(set) var client: PubNub? {
+    public private(set) var client: PubNub {
         willSet {
-            client?.removeListener(self)
+            client.removeListener(self)
         }
         didSet {
-            client?.addListener(self)
+            client.addListener(self)
+            subscribeToLocationActivityChannel()
         }
     }
     
-    private let configuration: PNConfiguration = {
-        let config = PNConfiguration(publishKey: publishKey, subscribeKey: subscribeKey)
-        return config
-    }()
+    private let configuration: PNConfiguration
     
     let dispatchQueue: DispatchQueue
     
-    init(client: PubNub? = nil, dispatchQueue: DispatchQueue) {
-        self.client = client
+    init(configuration: PNConfiguration, dispatchQueue: DispatchQueue) {
         self.dispatchQueue = dispatchQueue
+        self.configuration = configuration
+        self.client = PubNub.clientWithConfiguration(configuration, callbackQueue: dispatchQueue)
         super.init()
-        self.client?.addListener(self)
+        
+        
+        
+        client.addListener(self)
+        //self.client?.addListener(self)
+    }
+    
+    private var _isLoggingOut = false
+    
+    var isLoggingOut: Bool {
+        get {
+            var loggingOut = false
+            let dispatchWorkItem = DispatchWorkItem(qos: .userInitiated, flags: [.assignCurrentContext], block: {
+                loggingOut = self._isLoggingOut
+            })
+            self.dispatchQueue.sync(execute: dispatchWorkItem)
+            return loggingOut
+        }
+        set {
+            let dispatchWorkItem = DispatchWorkItem(qos: .userInitiated, flags: [.assignCurrentContext, .barrier], block: {
+                self._isLoggingOut = newValue
+            })
+            self.dispatchQueue.async(execute: dispatchWorkItem)
+        }
     }
     
     var uuid: String? {
         get {
-            return client?.uuid()
+            return configuration.uuid
         }
         set {
             guard let actualUUID = newValue else {
-                client?.unsubscribeFromAll()
-                // warning this must be thread-safe (it isn't now)
-                client = nil
+                client.unsubscribeFromAll()
                 return
             }
             configuration.uuid = actualUUID
-            guard let existingClient = client else {
-                client = PubNub.clientWithConfiguration(configuration, callbackQueue: self.dispatchQueue)
-                return
-            }
-            existingClient.copyWithConfiguration(configuration, callbackQueue: self.dispatchQueue, completion: { (copiedClient) in
+            client.copyWithConfiguration(configuration, callbackQueue: dispatchQueue) { (copiedClient) in
                 self.client = copiedClient
-                
-            })
-            
+            }
         }
     }
+    
+//    var uuid: String? {
+//        get {
+//            return client?.uuid()
+//        }
+//        set {
+//            guard let actualUUID = newValue else {
+//                client?.unsubscribeFromAll()
+//                // warning this must be thread-safe (it isn't now)
+//                client = nil
+//                return
+//            }
+//            configuration.uuid = actualUUID
+//            guard let existingClient = client else {
+//                client = PubNub.clientWithConfiguration(configuration, callbackQueue: self.dispatchQueue)
+//                subscribeToLocationActivityChannel()
+//                return
+//            }
+//            existingClient.copyWithConfiguration(configuration, callbackQueue: self.dispatchQueue, completion: { (copiedClient) in
+//                self.client = copiedClient
+//                
+//            })
+//            
+//        }
+//    }
     
     // MARK: - PubNub Actions
     
@@ -85,9 +128,9 @@ class Network: NSObject, PNObjectEventListener {
             "latitude": location.latitude,
             "longitude": location.longitude,
         ]
-        client?.publish(message, toChannel: LocationActivityChannel, withCompletion: { (status) in
+        client.publish(message, toChannel: LocationActivityChannel, withCompletion: { (status) in
             if status.isError {
-                print("Handle publish error")
+                print("Publish error: \(status.debugDescription)")
             }
         })
     }
@@ -97,6 +140,10 @@ class Network: NSObject, PNObjectEventListener {
             return
         }
         publish(location: location, for: activeUser)
+    }
+    
+    func subscribeToLocationActivityChannel() {
+        client.subscribeToChannels([LocationActivityChannel], withPresence: true)
     }
     
     // MARK: - PNObjectEventListener
