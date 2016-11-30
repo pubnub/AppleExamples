@@ -20,11 +20,51 @@ class Account: NSObject {
     
     static let sharedAccount = Account()
     
-//    private var activeUserObserverContext = 0
+    var dataController: DataController?
     
-    private dynamic var _activeUser: User? = nil
+    private dynamic var _activeUserUUID: String? = nil
+    private var _activeUser: User? = nil
     
-    dynamic var activeUser: User? {
+    private dynamic var activerUserUUID: String? {
+        get {
+            var currentUserUUID: String? = nil
+            let dispatchWorkItem = DispatchWorkItem(qos: .userInitiated, flags: [.assignCurrentContext]) {
+                currentUserUUID = self._activeUserUUID
+            }
+            dispatchQueue.sync(execute: dispatchWorkItem)
+            return currentUserUUID
+        }
+        set {
+            let dispatchWorkItem = DispatchWorkItem(qos: .userInitiated, flags: [.assignCurrentContext, .barrier]) {
+                print(#function)
+                self.willChangeValue(forKey: #keyPath(Account.activerUserUUID))
+                self._activeUserUUID = newValue
+                self.didChangeValue(forKey: #keyPath(Account.activerUserUUID))
+                Network.sharedNetwork.uuid = self._activeUserUUID
+                UserDefaults.standard.set(self._activeUserUUID, forKey: AccountUUIDKey)
+                var userNotificationName: Notification.Name
+                if let actualUUID = self._activeUserUUID {
+                    self.dataController = DataController(uuid: actualUUID)
+                    self.dataController?.persistentContainer.performBackgroundTask({ (context) in
+                        self.activeUser = User.createOrFetch(user: actualUUID, in: context)
+                    })
+                    self.dataController?.saveContext()
+                    userNotificationName = .LogInNotification
+                    
+                } else {
+                    userNotificationName = .LogOutNotification
+                    self.dataController?.saveContext()
+                    self.activeUser = nil
+                    self.dataController = nil
+                }
+                NotificationCenter.default.post(name: userNotificationName, object: nil)
+            }
+            dispatchQueue.async(execute: dispatchWorkItem)
+        }
+
+    }
+    
+    var activeUser: User? {
         get {
             var currentUser: User? = nil
             let dispatchWorkItem = DispatchWorkItem(qos: .userInitiated, flags: [.assignCurrentContext]) {
@@ -33,25 +73,44 @@ class Account: NSObject {
             dispatchQueue.sync(execute: dispatchWorkItem)
             return currentUser
         }
+        // Only set inside a barrier block
         set {
-            let dispatchWorkItem = DispatchWorkItem(qos: .userInitiated, flags: [.assignCurrentContext, .barrier]) {
-                print(#function)
-                self.willChangeValue(forKey: #keyPath(Account.activeUser))
-                self._activeUser = newValue
-                self.didChangeValue(forKey: #keyPath(Account.activeUser))
-                Network.sharedNetwork.uuid = self._activeUser?.uuid
-                UserDefaults.standard.set(self._activeUser?.uuid, forKey: AccountUUIDKey)
-                UserDefaults.standard.set(self._activeUser?.name, forKey: AccountNameKey)
-                var userNotificationName: Notification.Name
-                if let _ = self._activeUser {
-                    userNotificationName = .LogInNotification
-                } else {
-                    userNotificationName = .LogOutNotification
-                }
-                NotificationCenter.default.post(name: userNotificationName, object: nil)
-            }
-            dispatchQueue.async(execute: dispatchWorkItem)
+            self._activeUser = newValue
         }
+    }
+    
+//    private var activeUserObserverContext = 0
+    
+//    private dynamic var _activeUser: User? = nil
+    
+//    dynamic var activeUser: User? {
+//        get {
+//            var currentUser: User? = nil
+//            let dispatchWorkItem = DispatchWorkItem(qos: .userInitiated, flags: [.assignCurrentContext]) {
+//                currentUser = self._activeUser
+//            }
+//            dispatchQueue.sync(execute: dispatchWorkItem)
+//            return currentUser
+//        }
+//        set {
+//            let dispatchWorkItem = DispatchWorkItem(qos: .userInitiated, flags: [.assignCurrentContext, .barrier]) {
+//                print(#function)
+//                self.willChangeValue(forKey: #keyPath(Account.activeUser))
+//                self._activeUser = newValue
+//                self.didChangeValue(forKey: #keyPath(Account.activeUser))
+//                Network.sharedNetwork.uuid = self._activeUser?.uuid
+//                UserDefaults.standard.set(self._activeUser?.uuid, forKey: AccountUUIDKey)
+//                UserDefaults.standard.set(self._activeUser?.name, forKey: AccountNameKey)
+//                var userNotificationName: Notification.Name
+//                if let _ = self._activeUser {
+//                    userNotificationName = .LogInNotification
+//                } else {
+//                    userNotificationName = .LogOutNotification
+//                }
+//                NotificationCenter.default.post(name: userNotificationName, object: nil)
+//            }
+//            dispatchQueue.async(execute: dispatchWorkItem)
+//        }
 //        didSet {
 //            UserDefaults.standard.set(activeUser?.uuid, forKey: AccountUUIDKey)
 //            UserDefaults.standard.set(activeUser?.name, forKey: AccountNameKey)
@@ -65,11 +124,12 @@ class Account: NSObject {
 ////            oldValue?.removeObserver(self, forKeyPath: #keyPath(activeUser))
 ////            activeUser?.addObserver(self, forKeyPath: #keyPath(User.name), options: [.new, .old], context: &activeUserObserverContext)
 //        }
-    }
+//    }
+    
     
     var hasActiveUser: Bool {
         get {
-            if let _ = activeUser {
+            if let _ = activerUserUUID {
                 return true
             } else {
                 return false
@@ -85,10 +145,12 @@ class Account: NSObject {
         }
         self.dispatchQueue = appDelegate.dispatchQueue
         super.init()
-        guard let actualUUID = UserDefaults.standard.string(forKey: AccountUUIDKey), let actualName = UserDefaults.standard.string(forKey: AccountNameKey) else {
+        guard let actualUUID = UserDefaults.standard.string(forKey: AccountUUIDKey) else {
             return
         }
-        self.activeUser = User(uuid: actualUUID, name: actualName)
+//        dataController = DataController(uuid: actualUUID)
+        self.activerUserUUID = actualUUID
+//        self.activeUser = User(uuid: actualUUID, name: actualName)
         //activeUser?.addObserver(self, forKeyPath: #keyPath(User.name), options: [.new, .old, .initial, .prior], context: &activeUserObserverContext)
     }
     
@@ -122,7 +184,10 @@ class Account: NSObject {
                 handler?(action)
                 return
             }
-            self.activeUser = User(uuid: UUID().uuidString, name: inputText)
+            do {
+                
+            }
+//            self.activeUser = User(uuid: UUID().uuidString, name: inputText)
             handler?(action)
         })
         
@@ -137,8 +202,9 @@ class Account: NSObject {
     func logOutAlertController(handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
         let alertController = UIAlertController(title: "Logout", message: "Are you sure you want to log out?", preferredStyle: .alert)
         let logOutAction = UIAlertAction(title: "Log Out", style: .default, handler: { (action) in
-            self.activeUser = nil
+//            self.activeUser = nil
             // Is this even necessary?
+            self.activerUserUUID = nil
             self.dispatchQueue.async(execute: {
                 handler?(action)
             })

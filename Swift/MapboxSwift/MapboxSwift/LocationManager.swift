@@ -28,9 +28,10 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     func performAppStartActions() {
         switch LocationManager.authorizationStatus() {
         case .authorizedAlways:
-            if Account.sharedAccount.hasActiveUser {
-                startUpdatingLocation()
-            }
+            print("whatever")
+//            if Account.sharedAccount.hasActiveUser {
+//                startUpdatingLocation()
+//            }
         case .authorizedWhenInUse, .denied, .restricted:
             fatalError("Not designed to run in these conditions")
         case .notDetermined:
@@ -51,11 +52,11 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let latestLocation = locations.last else {
-            return
-        }
+//        guard let latestLocation = locations.last else {
+//            return
+//        }
         
-        Network.sharedNetwork.publishActiveUserLocation(location: latestLocation.coordinate)
+//        Network.sharedNetwork.publishActiveUserLocation(location: latestLocation.coordinate)
 //        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
 //            return
 //        }

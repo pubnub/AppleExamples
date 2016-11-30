@@ -22,11 +22,11 @@ class MapViewController: UIViewController, MGLMapViewDelegate {
 
         // Do any additional setup after loading the view.
         mapView.delegate = self
-        guard let userName = Account.sharedAccount.activeUser?.name else {
-            dismiss(animated: true)
-            return
-        }
-        navigationItem.title = userName
+//        guard let userName = Account.sharedAccount.activeUser?.name else {
+//            dismiss(animated: true)
+//            return
+//        }
+//        navigationItem.title = userName
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log out", style: .done, target: self, action: #selector(logOutButtonTapped(sender:)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshButtonTapped(sender:)))
     }

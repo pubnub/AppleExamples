@@ -25,9 +25,9 @@ class Network: NSObject, PNObjectEventListener {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("How did we not find the app delegate?")
         }
-        if let activeUUID = Account.sharedAccount.activeUser?.uuid {
-            config.uuid = activeUUID
-        }
+//        if let activeUUID = Account.sharedAccount.activeUser?.uuid {
+//            config.uuid = activeUUID
+//        }
 //        let client = PubNub.clientWithConfiguration(config, callbackQueue: appDelegate.dispatchQueue)
 //        return Network(client: client, dispatchQueue: appDelegate.dispatchQueue)
         return Network(configuration: config, dispatchQueue: appDelegate.dispatchQueue)
@@ -121,26 +121,26 @@ class Network: NSObject, PNObjectEventListener {
     
     // MARK: - PubNub Actions
     
-    func publish(location: CLLocationCoordinate2D, for user: User) {
-        let message: [String: Any] = [
-            "username": user.name,
-            "uuid": user.uuid,
-            "latitude": location.latitude,
-            "longitude": location.longitude,
-        ]
-        client.publish(message, toChannel: LocationActivityChannel, withCompletion: { (status) in
-            if status.isError {
-                print("Publish error: \(status.debugDescription)")
-            }
-        })
-    }
+//    func publish(location: CLLocationCoordinate2D, for user: User) {
+//        let message: [String: Any] = [
+//            "username": user.name,
+//            "uuid": user.uuid,
+//            "latitude": location.latitude,
+//            "longitude": location.longitude,
+//        ]
+//        client.publish(message, toChannel: LocationActivityChannel, withCompletion: { (status) in
+//            if status.isError {
+//                print("Publish error: \(status.debugDescription)")
+//            }
+//        })
+//    }
     
-    func publishActiveUserLocation(location: CLLocationCoordinate2D) {
-        guard let activeUser = Account.sharedAccount.activeUser else {
-            return
-        }
-        publish(location: location, for: activeUser)
-    }
+//    func publishActiveUserLocation(location: CLLocationCoordinate2D) {
+//        guard let activeUser = Account.sharedAccount.activeUser else {
+//            return
+//        }
+//        publish(location: location, for: activeUser)
+//    }
     
     func subscribeToLocationActivityChannel() {
         client.subscribeToChannels([LocationActivityChannel], withPresence: true)

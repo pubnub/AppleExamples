@@ -60,7 +60,7 @@ end
 
 target 'MapboxSwift' do
 	project 'Swift/MapboxSwift/MapboxSwift'
-	platform :ios, '8.0'
+	platform :ios, '10.0'
 	pod 'PubNub'
 	pod 'Mapbox-iOS-SDK', '~> 3.3'
 end

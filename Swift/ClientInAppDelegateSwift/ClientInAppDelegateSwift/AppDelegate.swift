@@ -32,6 +32,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let channels = [
+            "a",
+            ]
+        self.client.subscribeToChannels(channels, withPresence: false)
         return true
     }
 
@@ -57,10 +61,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
         // This is the best place to begin resubscribing to any important channels
-        let channels = [
-            "a",
-        ]
-        self.client.subscribeToChannels(channels, withPresence: true)
+//        let channels = [
+//            "a",
+//        ]
+//        self.client.subscribeToChannels(channels, withPresence: true)
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -72,6 +76,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     func client(_ client: PubNub, didReceive status: PNStatus) {
         // This is a good place to deal with unexpected status messages like
         // network failures
+        print("******************************************************************")
+        print(status.debugDescription)
+        print("******************************************************************")
     }
     
     func client(_ client: PubNub, didReceiveMessage message: PNMessageResult) {

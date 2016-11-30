@@ -18,25 +18,32 @@ NSString * const kSubscribeKey = @"demo";
 
 @implementation AppDelegate
 
-- (PubNub *)client {
-    if (!_client) {
-        // insert your keys here
-        PNConfiguration *config = [PNConfiguration configurationWithPublishKey:kPublishKey subscribeKey:kSubscribeKey];
-        _client = [PubNub clientWithConfiguration:config];
-        // optionally add the app delegate as a listener, or anything else
-        // View Controllers should get the client from the App Delegate
-        // and add themselves as listeners if they are interested in
-        // stream events (subscribe, presence, status)
-        [_client addListener:self];
-    }
-    return _client;
-}
+//- (PubNub *)client {
+//    if (!_client) {
+//        // insert your keys here
+//        PNConfiguration *config = [PNConfiguration configurationWithPublishKey:kPublishKey subscribeKey:kSubscribeKey];
+//        _client = [PubNub clientWithConfiguration:config];
+//        // optionally add the app delegate as a listener, or anything else
+//        // View Controllers should get the client from the App Delegate
+//        // and add themselves as listeners if they are interested in
+//        // stream events (subscribe, presence, status)
+//        [_client addListener:self];
+//    }
+//    return _client;
+//}
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     // This is where you should register for push notifications and
     // add any push tokens using your client
+    PNConfiguration *config = [PNConfiguration configurationWithPublishKey:kPublishKey subscribeKey:kSubscribeKey];
+    self.client = [PubNub clientWithConfiguration:config];
+    [self.client addListener:self];
+    NSArray<NSString *> *channels = @[
+                                      @"a",
+                                      ];
+    [self.client subscribeToChannels:channels withPresence:NO];
     return YES;
 }
 
@@ -66,10 +73,10 @@ NSString * const kSubscribeKey = @"demo";
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
     // This is the best place to begin resubscribing to any important channels
-    NSArray<NSString *> *channels = @[
-                                     @"a",
-                                     ];
-    [self.client subscribeToChannels:channels withPresence:YES];
+//    NSArray<NSString *> *channels = @[
+//                                     @"a",
+//                                     ];
+//    [self.client subscribeToChannels:channels withPresence:YES];
 }
 
 
@@ -82,6 +89,9 @@ NSString * const kSubscribeKey = @"demo";
 - (void)client:(PubNub *)client didReceiveStatus:(PNStatus *)status {
     // This is a good place to deal with unexpected status messages like
     // network failures
+    NSLog(@"************************************************");
+    NSLog(@"%@", status.debugDescription);
+    NSLog(@"************************************************");
 }
 
 - (void)client:(PubNub *)client didReceiveMessage:(PNMessageResult *)message {
