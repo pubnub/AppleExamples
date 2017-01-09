@@ -18,7 +18,7 @@ public class User: NSManagedObject {
         case noUUID
     }
     
-    static func createOrFetch(user uuid: String, in context: NSManagedObjectContext) -> User {
+    static func fetch(user uuid: String, in context: NSManagedObjectContext) -> User? {
         var firstResult: User? = nil
         
         context.performAndWait {
@@ -32,12 +32,40 @@ public class User: NSManagedObject {
             } catch {
                 fatalError(error.localizedDescription)
             }
-            if firstResult == nil {
+        }
+        return firstResult
+    }
+    
+    static func createOrFetch(user uuid: String, in context: NSManagedObjectContext) -> User {
+        
+        var firstResult: User? = fetch(user: uuid, in: context)
+        if firstResult == nil {
+            context.performAndWait {
                 firstResult = User(context: context)
                 firstResult!.uuid = uuid
             }
         }
         return firstResult!
+        
+//        
+//        
+//        context.performAndWait {
+//            let matchingUserFetchRequest: NSFetchRequest<User> = User.fetchRequest()
+//            let userSortDescriptors = NSSortDescriptor(key: #keyPath(User.uuid), ascending: true)
+//            matchingUserFetchRequest.sortDescriptors = [userSortDescriptors]
+//            matchingUserFetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
+//            do {
+//                let results = try matchingUserFetchRequest.execute()
+//                firstResult = results.first
+//            } catch {
+//                fatalError(error.localizedDescription)
+//            }
+//            if firstResult == nil {
+//                firstResult = User(context: context)
+//                firstResult!.uuid = uuid
+//            }
+//        }
+//        return firstResult!
     }
     
     static func createOrUpdate(values: [String: Any], in context: NSManagedObjectContext) throws -> User {

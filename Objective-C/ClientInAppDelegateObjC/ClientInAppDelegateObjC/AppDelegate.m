@@ -38,6 +38,10 @@ NSString * const kSubscribeKey = @"demo";
     // This is where you should register for push notifications and
     // add any push tokens using your client
     PNConfiguration *config = [PNConfiguration configurationWithPublishKey:kPublishKey subscribeKey:kSubscribeKey];
+    config.subscribeMaximumIdleTime = 155.0;
+    config.heartbeatNotificationOptions = PNHeartbeatNotifyFailure;
+    config.presenceHeartbeatValue = 60.0
+    config.presenceHeartbeatInterval = 29.0;
     self.client = [PubNub clientWithConfiguration:config];
     [self.client addListener:self];
     NSArray<NSString *> *channels = @[

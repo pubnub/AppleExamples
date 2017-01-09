@@ -44,19 +44,25 @@ class DataController: NSObject {
     var persistentContainer: NSPersistentContainer
     
     init(uuid: String) {
-        let bundle = Bundle(for: DataController.classForCoder())
-        guard let dataModelBundleURL = bundle.url(forResource: "MapBoxSwift", withExtension: "bundle") else {
-            fatalError("no pod bundle URL")
-        }
-        guard let dataModelBundle = Bundle(url: dataModelBundleURL) else {
-            fatalError("no pod bundle")
-        }
-        guard let model = NSManagedObjectModel.mergedModel(from: [dataModelBundle]) else {
-            fatalError("no managed object model")
+//        let mainBundle = Bundle.m
+//        let mainBundle = Bundle(for: DataController.classForCoder())
+//        NSManagedObjectModel.mergedModel(from: [bundle])!
+//        guard let dataModelBundleURL = bundle.url(forResource: "MapBoxSwift", withExtension: "bundle") else {
+//            fatalError("no pod bundle URL")
+//        }
+//        guard let dataModelBundle = Bundle(url: dataModelBundleURL) else {
+//            fatalError("no pod bundle")
+//        }
+//        guard let model = NSManagedObjectModel.mergedModel(from: [dataModelBundle]) else {
+//            fatalError("no managed object model")
+//        }
+        guard let model = NSManagedObjectModel.mergedModel(from: [Bundle.main]) else {
+            fatalError("Couldn't find model")
         }
         self.persistentContainer = NSPersistentContainer(name: uuid, managedObjectModel: model)
         super.init()
         persistentContainer.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            print("what what finished loading persistent stores")
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.

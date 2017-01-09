@@ -36,12 +36,25 @@
 }
 
 #pragma mark - PNObjectEventListener
+//
+//- (void)client:(PubNub *)client didReceiveStatus:(PNStatus *)status {
+//    NSString *statusString = [NSString stringWithFormat:@"%@\n", status.debugDescription];
+//    self.textView.text = [statusString stringByAppendingString:self.textView.text];
+//    [self.textView setNeedsLayout];
+//}
 
 - (void)client:(PubNub *)client didReceiveStatus:(PNStatus *)status {
-    NSString *statusString = [NSString stringWithFormat:@"%@\n", status.debugDescription];
-    self.textView.text = [statusString stringByAppendingString:self.textView.text];
-    [self.textView setNeedsLayout];
+    if ((status.operation == PNHeartbeatOperation) && status.isError) {
+        // We are going to react to any failed heartbeat operations here
+        // By subscribing to an empty array of channels, we force the client
+        // to re-establish its connection to PubNub, as a method to fight
+        // issues with packet loss
+        [client subscribeToChannels:@[] withPresence:YES];
+    } else {
+        // Do other status actions here
+    }
 }
+
 
 - (void)client:(PubNub *)client didReceiveMessage:(PNMessageResult *)message {
     NSString *messageString = [NSString stringWithFormat:@"%@\n", message.debugDescription];
